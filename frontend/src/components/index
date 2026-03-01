@@ -1,0 +1,101 @@
+<!-- This is an HTML comment -->
+<!-- -->
+
+<!DOCTYPE html>
+<html lang="en-UK">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="My first website">
+  <meta name="keywords" content="HTML, CSS, JavaScript, Timothy Pearman, Timothy">
+  <meta name="author" content="Timothy Pearman">  <!-- -->  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <meta http-equiv="refresh" content="300"> -->  <!--how often the website refreshes the page-->  
+  
+  <title>Timmy's Test Website</title>
+  <link rel="icon" type="image/x-icon" href="docs/assets/img/green.png">
+  <link rel="stylesheet" href="sub_style.css">
+  <script src="sub_script.js"></script>
+</head>
+
+<body>
+  <div class="header">
+    <h1>Timmy's Website</h1>
+    <p>lucas, marcus and jakson are stinky</p>
+  </div>
+
+
+  <div class="sticky">
+    <div class="topnav">
+      <a href="#">CompSci project</a>
+      <a href="#">Drone</a>
+      <a href="#">ESP32</a>
+      <a href="https://scratch.mit.edu/projects/640881185">marcus stupid game</a>
+      <a href="index.html" style="float:right">Portfolio Page</a>
+    </div>
+  </div>
+
+  <div class="row">
+      <div class="column main">
+        main
+        <div class="section">
+          section
+
+          <div class="article">
+            article
+          </div>
+
+          <div class="article">
+            article
+          </div>
+        </div>
+  
+        <div class="section">
+          section
+
+          <div class="article">
+            article
+
+            <p id="CLICKME" title="CLICK ME">click the button!</strong> </p>
+            <details>Just click the button</details>
+          </div>
+      
+          <div class="article">
+            article
+
+            <p1 id="testtext">Phase 1</p1>
+            <button title="CLICK ME" type="button" onclick="flipFunction()">Update</button>
+            <br>
+            <img id="testpic" src="docs/assets/img/green.png" width="250" height="250">
+          </div>
+        </div>
+    </div>
+    
+    <div class="column side">
+      side
+    </div>
+  </div>
+
+  <!-- 
+
+  <div class="footer">
+    footer
+    <form>  
+      <fieldset>  
+        <legend>backbencher applicant:</legend>  
+        <label>First Name</label><br>  
+        <input type="text" name="fname"><br>  
+        <label>Last Name</label><br>  
+        <input type="text" name="lname"><br>  
+        <label>Enter Email</label><br>  
+        <input type="email" name="email"><br><br>  
+        <input type="Submit"><br>  
+      </fieldset>  
+    </form>  
+  </div>
+
+  -->
+
+</body>
+
+</html>

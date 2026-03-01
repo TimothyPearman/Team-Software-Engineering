@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/x-icon" href="docs/assets/img/red.png">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- <meta http-equiv="refresh" content="60"> -->
+        
+        <title>Portfolio Page</title>
+        <link rel="stylesheet" href="style.css">
+        <script type="module" src="script.js"></script>
+        <style> 
+            body {
+                margin: 0;
+            }
+            .cyan {
+                color: #00ffff;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <div class="absolute centre">
+                <h1 class="startpage">Timothy Pearman</h1>
+                <p class="startpage">IDK what to put here</p>
+                <button class="button" title="wow cool animation :D" type="button" onclick="startanimation()">continue</button>
+            </div>
+        </div>
+        <script>
+            let animation1 = false;
+            function startanimation() {
+                animation1 = true;
+                let startpages = document.querySelectorAll('.startpage');
+                startpages.forEach(function(startpage) {
+                    startpage.classList.add('move');
+                });
+
+                let buttons = document.querySelectorAll('.button');
+                buttons.forEach(function(button) {
+                    button.classList.add('delete');
+                });
+            }
+        </script>
+    </body>
+</html>

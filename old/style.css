@@ -1,0 +1,55 @@
+.absolute {
+    position: absolute; /*overlap with other elements*/
+} 
+.centre {
+    text-align: center;
+    top: 50%; /*centre on y-axis*/
+    left: 50%; /*centre on x-axis*/
+    transform: translate(-50%, -50%); /*move point to centre of text not top left corner*/
+}
+
+.startpage {
+    color: #00ffff;
+    font-size: 3em;
+
+    /*
+    animation: spin 3s linear infinite;
+    */
+}
+.move {
+    animation: move 1.75s forwards;
+}
+@keyframes move {
+    from { transform: translateY(0); }
+    to { transform: translateY(-1500%); }
+}
+
+.button {
+    padding: 15px 25px;
+    font-size: 24px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: #8429f2;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+}
+.button:hover {
+    background-color: #9748f7
+}
+.button:active {
+    background-color: #8429f2;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+.delete {
+    animation: fade 1s;
+    pointer-events: none; /* Disable clicking */
+    opacity: 0;
+}
+@keyframes fade {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
