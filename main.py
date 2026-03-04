@@ -12,6 +12,8 @@ BACKEND_DIR = ROOT_DIR / "backend"
 FRONTEND_DIR = ROOT_DIR / "frontend"
 BACKEND_HEALTH_URL = "http://127.0.0.1:8000"
 BACKEND_OPEN_URL = "http://127.0.0.1:8000/docs"
+FRONTEND_HEALTH_URL = "http://localhost:5173"
+FRONTEND_OPEN_URL = "http://localhost:5173"
 
 
 def get_backend_python_executable() -> str:
@@ -45,24 +47,37 @@ def start_backend() -> subprocess.Popen:
 
 def start_frontend() -> subprocess.Popen:
     npm_cmd = "npm.cmd" if os.name == "nt" else "npm"
-    return subprocess.Popen([npm_cmd, "start"], cwd=str(FRONTEND_DIR))
+    return subprocess.Popen([npm_cmd, "run", "dev"], cwd=str(FRONTEND_DIR))
 
 
-def open_backend_in_browser_when_ready(
-    backend_process: subprocess.Popen,
-    health_url: str = BACKEND_HEALTH_URL,
-    open_url: str = BACKEND_OPEN_URL,
+def open_url_in_browser(url: str) -> None:
+    opened = webbrowser.open_new_tab(url)
+    if opened:
+        return
+
+    if os.name == "nt":
+        try:
+            os.startfile(url)
+            return
+        except OSError:
+            subprocess.Popen(["cmd", "/c", "start", "", url])
+
+
+def open_in_browser_when_ready(
+    process: subprocess.Popen,
+    health_url: str,
+    open_url: str,
     timeout: int = 20,
 ) -> None:
     deadline = time.time() + timeout
 
     while time.time() < deadline:
-        if backend_process.poll() is not None:
+        if process.poll() is not None:
             return
 
         try:
             with urlopen(health_url, timeout=1):
-                webbrowser.open(open_url, new=2)
+                open_url_in_browser(open_url)
                 return
         except URLError:
             time.sleep(0.5)
@@ -82,7 +97,16 @@ if __name__ == "__main__":
     backend_process = start_backend()
     frontend_process = start_frontend()
 
-    open_backend_in_browser_when_ready(backend_process)
+    open_in_browser_when_ready(
+        frontend_process,
+        health_url=FRONTEND_HEALTH_URL,
+        open_url=FRONTEND_OPEN_URL,
+    )
+    open_in_browser_when_ready(
+        backend_process,
+        health_url=BACKEND_HEALTH_URL,
+        open_url=BACKEND_OPEN_URL,
+    )
     
 
     try:
