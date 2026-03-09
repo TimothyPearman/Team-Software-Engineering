@@ -3,9 +3,23 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+const API_URL = "http://localhost:8000"
+
 function App() {
   const [count, setCount] = useState(0)
+  const [lesson, setLesson] = useState(null)
 
+  const fetchLesson = async () => {
+    try {
+      const response = await fetch(API_URL + "/lessons/get")
+      if (!response.ok) throw new Error("Server error: " + response.status)
+      const data = await response.json()
+      setLesson(data)
+    } catch (error) {
+      setLesson({ error: error.message })
+    }
+  }
+  
   return (
     <>
       <div>
