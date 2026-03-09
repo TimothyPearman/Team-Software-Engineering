@@ -27,10 +27,16 @@ def get_user_clearance(db: Session = Depends(get_db)):
 """
 GET Endpoints:
 """
-@router.get("/get", response_model=PlaceHolder, summary="?")
-async def get_data(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    """?"""
-    return None
+#@router.get("/get", response_model=PlaceHolder, summary="?")
+#async def get_data(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    #"""?"""
+    #return None
+
+
+# Had to change above to test sorry will change back when the database is set up and works for endpoints
+@router.get("/get", summary="Get all lessons")
+async def get_data(db: Session = Depends(get_db)):
+    return {"lesson": "Testing da lessons"}
 
 """
 POST Endpoints:
