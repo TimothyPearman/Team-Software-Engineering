@@ -16,6 +16,10 @@ CREATE TABLE `Question` (
     `Question_ID` INT NOT NULL AUTO_INCREMENT,
     `Level_ID` INT NOT NULL,
     `Question` TEXT NOT NULL,
+    `Option_A` TEXT NOT NULL,
+    `Option_B` TEXT NOT NULL,
+    `Option_C` TEXT NOT NULL,
+    `Option_D` TEXT NOT NULL,
     `Answer` TEXT NOT NULL,
     CONSTRAINT `pk_Question` PRIMARY KEY (`Question_ID`)
 );
@@ -227,7 +231,13 @@ ORDER BY `User`.User_ID ASC;
 CREATE OR REPLACE SQL SECURITY DEFINER VIEW `Level_Questions` AS
 SELECT 
 	`Level`.Level_ID,
-    `Question`.Question_ID,`Question`.Question,`Question`.Answer
+    `Question`.Question_ID,
+    `Question`.Question,
+    `Question`.Option_A,
+    `Question`.Option_B,
+    `Question`.Option_C,
+    `Question`.Option_D,
+    `Question`.Answer
 FROM `Level`
 INNER JOIN `Question`
 	ON `Level`.Level_ID = `Question`.Level_ID
