@@ -16,10 +16,6 @@ CREATE TABLE `Question` (
     `Question_ID` INT NOT NULL AUTO_INCREMENT,
     `Level_ID` INT NOT NULL,
     `Question` TEXT NOT NULL,
-    `Option_A` TEXT NOT NULL,
-    `Option_B` TEXT NOT NULL,
-    `Option_C` TEXT NOT NULL,
-    `Option_D` TEXT NOT NULL,
     `Answer` TEXT NOT NULL,
     CONSTRAINT `pk_Question` PRIMARY KEY (`Question_ID`)
 );
@@ -125,34 +121,49 @@ CREATE TABLE `User_Badge` (
 
 
 # ---------------------------------------------------------------------- #
-# Add info into all tables for `?`                                #
+# Add info into all tables                                               #
 # ---------------------------------------------------------------------- #
 
-# this is a place holder insert from another project, modify to work with current project
+START TRANSACTION;
+INSERT INTO `Streak`(StartDate,EndDate,Count)
+VALUES ("1111-11-1 11:11:11", "1111-11-2 11:11:11",1);
+INSERT INTO `Streak`(StartDate,EndDate,Count)
+VALUES ("1111-11-4 11:11:11", "1111-11-6 11:11:11",2);
 
-#START TRANSACTION;
-#
-#Insert into `Individual`(FirstName,LastName,Address,City,StateID,ZipCode,DriversLicense,StateIssuedID,BirthDate,Height,Weight,Eyes) 
-#values ("Mary","Wilson","11106 8500 Ave SW",NULL,(SELECT StateID FROM States WHERE State LIKE "Washington"),NULL,NULL,1,"1111-11-1 11:11:11","",12345,"");
-#SET @IndividualID = LAST_INSERT_ID();
-#Insert into `Vehicle`(VehicleLicense,StateID,Colour,Year,Make,Type,VIN,RegisteredOwner,Address) 
-#values (NULL,1,NULL,12345,"","",NULL,"Mary_Wilson",NULL);
-#SET @VehicleID = LAST_INSERT_ID();
-#Insert into `Location`(Miles,Direction,Town,Road) 
-#values (12345,"","","");
-#SET @LocationID = LAST_INSERT_ID();
-#Insert into `Information`(LocationID,ViolationDate,District,Detachment) 
-#values (@LocationID,"1111-11-1 11:11:11",12345,12345);
-#SET @InformationID = LAST_INSERT_ID();
-#Insert into `Violation`(Violation) 
-#values ("");
-#SET @ViolationID = LAST_INSERT_ID();
-#Insert into `Notice`(IndividualID,VehicleID,InformationID,ViolationID,OfficerID,ActionSelection,DriversSignature) 
-#values (@IndividualID,@VehicleID,@InformationID,@ViolationID,(SELECT OfficerID FROM Officer WHERE OfficersSignature LIKE "Timothy Pearman"),12345,
-#(SELECT CONCAT(FirstName,LastName) FROM `Individual` WHERE IndividualID like @IndividualID));
-#
-#COMMIT;
+INSERT INTO `Badge`(Name,Description,Asset)
+VALUES ("badge1", "badge_desc","/assets/badge1");
+INSERT INTO `Badge`(Name,Description,Asset)
+VALUES ("badge2", "badge_desc","/assets/badge2");
 
+INSERT INTO `Level`(Dictionary_ID)
+VALUES (1);
+
+INSERT INTO `Dictionary`(Description)
+VALUES ("dict_desc");
+
+INSERT INTO `Question`(Level_ID,Question,Answer)
+VALUES (1,"question1","answer");
+INSERT INTO `Question`(Level_ID,Question,Answer)
+VALUES (1,"question2","answer");
+COMMIT;
+
+START TRANSACTION;
+INSERT INTO `Progress`(Score,Level_ID)
+VALUES ("999", "1");
+SET @ProgressID = LAST_INSERT_ID();
+INSERT INTO `User`(Username,Password_Hash,CurrentStreak_ID,FavouriteBadge_ID,Progress_ID)
+VALUES ("timmy", "TPass",1,1,@ProgressID);
+
+INSERT INTO `User_Streak`(User_ID,Streak_ID)
+VALUES (1,1);
+INSERT INTO `User_Streak`(User_ID,Streak_ID)
+VALUES (1,2);
+
+INSERT INTO `User_Badge`(User_ID,Badge_ID)
+VALUES (1,1);
+INSERT INTO `User_Badge`(User_ID,Badge_ID)
+VALUES (1,2);
+COMMIT;
 
 # ----------------------------------------------------------------------constraints---------------------------------------------------------------------- #
 
@@ -198,7 +209,7 @@ ADD CONSTRAINT `fk_Level_Dictionary` FOREIGN KEY (`Dictionary_ID`)
 		REFERENCES `Dictionary`(`Dictionary_ID`);
         
 ALTER TABLE `Question`
-ADD CONSTRAINT `fk_Question_Level` FOREIGN KEY (`Question_ID`)
+ADD CONSTRAINT `fk_Question_Level` FOREIGN KEY (`Level_ID`)
 		REFERENCES `Level`(`Level_ID`);
 
 
@@ -231,13 +242,7 @@ ORDER BY `User`.User_ID ASC;
 CREATE OR REPLACE SQL SECURITY DEFINER VIEW `Level_Questions` AS
 SELECT 
 	`Level`.Level_ID,
-    `Question`.Question_ID,
-    `Question`.Question,
-    `Question`.Option_A,
-    `Question`.Option_B,
-    `Question`.Option_C,
-    `Question`.Option_D,
-    `Question`.Answer
+    `Question`.Question_ID,`Question`.Question,`Question`.Answer
 FROM `Level`
 INNER JOIN `Question`
 	ON `Level`.Level_ID = `Question`.Level_ID
