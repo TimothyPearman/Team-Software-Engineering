@@ -4,9 +4,9 @@ from sqlalchemy.orm import sessionmaker, Session
 import MySQLdb
 
 # ! database connection URL for my pc
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:@localhost:3306/Traffic_Correction_Notices"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:@localhost:3306/CompuTaught"
 # ! database connection URL for labs pc
-#SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:computing@127.0.0.1:3306/Traffic_Correction_Notices"
+#SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:computing@127.0.0.1:3306/CompuTaught"
 
 # create the SQLAlchemy engine that manages DB connections
 engine = create_engine(

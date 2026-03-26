@@ -9,7 +9,8 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
     if db_user is None:                    # check if user exists
         return None
     
-    if cast(str, db_user.password) != password:   # check if password matches
+    # Current schema stores credentials in Password_Hash (legacy plain text in this project).
+    if cast(str, db_user.Password_Hash) != password:   # check if password matches
         return None
     
     return db_user
@@ -20,7 +21,7 @@ def get_user_by_username(db: Session, username: str) -> Optional[UserModel]:
 
 def create_user(db: Session, username: str, password: str, clearance: str):
     """create a new user"""
-    user = UserModel(Username=username, password=password, Clearance=clearance) # create a new user object with the given username, password, and clearance level
+    user = UserModel(Username=username, Password_Hash=password) # create a new user object with the given username and password
     
     db.add(user)        # add new user to database session
     db.commit()         # commit transaction to save new user to database

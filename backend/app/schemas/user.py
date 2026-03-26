@@ -1,21 +1,15 @@
-# app/schemas/review.py
 from pydantic import BaseModel
-from typing import Optional
+from datetime import date
 
-class Token(BaseModel):
-    """schema for the token response when a user logs in"""
-    access_token: str
-    token_type: str
-    expires_in: int
-
-class UserBase(BaseModel):
-    """base schema for a user"""
+class FullUserSchema(BaseModel):
+    """schema returned by GET /users/get with all related data"""
+    User_ID: int        # ! temp
     Username: str
-    Clearance: str
-
-class User(UserBase):
-    """schema returned by the API for a user"""
-    id: int
-
-    class Config:
-        from_attributes = True
+    Password_Hash: str  # ! temp
+    StartDate: date
+    EndDate: date | None
+    Count: int
+    Name: str
+    Description: str | None
+    Asset: str | None
+    Level_ID: int | None

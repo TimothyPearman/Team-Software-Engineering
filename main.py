@@ -3,6 +3,7 @@ import subprocess
 import sys
 import time
 import webbrowser
+import shutil
 from pathlib import Path
 from urllib.error import URLError
 from urllib.request import urlopen
@@ -45,8 +46,27 @@ def start_backend() -> subprocess.Popen:
     )
 
 
-def start_frontend() -> subprocess.Popen:
+def get_npm_command() -> str:
     npm_cmd = "npm.cmd" if os.name == "nt" else "npm"
+    if shutil.which(npm_cmd):
+        return npm_cmd
+    raise RuntimeError(
+        "npm is not available in PATH. Install Node.js and restart your terminal."
+    )
+
+
+def ensure_frontend_dependencies() -> None:
+    node_modules = FRONTEND_DIR / "node_modules"
+    if node_modules.exists():
+        return
+
+    print("Frontend dependencies not found. Running npm install...")
+    subprocess.run([get_npm_command(), "install"], cwd=str(FRONTEND_DIR), check=True)
+
+
+def start_frontend() -> subprocess.Popen:
+    ensure_frontend_dependencies()
+    npm_cmd = get_npm_command()
     return subprocess.Popen([npm_cmd, "run", "dev"], cwd=str(FRONTEND_DIR))
 
 
@@ -95,7 +115,11 @@ def stop_process(process: subprocess.Popen) -> None:
 
 if __name__ == "__main__":
     backend_process = start_backend()
-    frontend_process = start_frontend()
+    try:
+        frontend_process = start_frontend()
+    except Exception:
+        stop_process(backend_process)
+        raise
 
     open_in_browser_when_ready(
         frontend_process,
@@ -109,15 +133,26 @@ if __name__ == "__main__":
     )
     
 
+    exit_code = 0
     try:
         while True:
             if backend_process.poll() is not None:
-                raise RuntimeError("Backend process exited")
+                raise RuntimeError(
+                    f"Backend process exited with code {backend_process.returncode}"
+                )
             if frontend_process.poll() is not None:
-                raise RuntimeError("Frontend process exited")
+                raise RuntimeError(
+                    f"Frontend process exited with code {frontend_process.returncode}"
+                )
             time.sleep(1)
     except KeyboardInterrupt:
         pass
+    except RuntimeError as exc:
+        print(exc)
+        if frontend_process.returncode is not None and frontend_process.returncode != 0:
+            print("Tip: if frontend still fails, run 'npm install' inside frontend.")
+        exit_code = 1
     finally:
         stop_process(frontend_process)
         stop_process(backend_process)
+        sys.exit(exit_code)

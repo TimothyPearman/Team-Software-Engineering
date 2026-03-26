@@ -1,9 +1,10 @@
 from pydantic import BaseModel
 
-class DictionarySchema(BaseModel):
+class LevelSchema(BaseModel):
     """schema returned by GET /users/get"""
+    Level_ID: int
     Dictionary_ID: int
-    Description: str
 
     class Config:
         from_attributes = True
+

@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 from typing import Annotated, cast
 
 from ..db.session import get_db
-from ..schemas.user import User, Token
+from ..schemas.user import FullUserSchema
+from ..schemas.auth import UserSchema, Token
 from ..crud import auth as crud_user
 from ..core.security import (
     create_access_token,
@@ -32,38 +33,11 @@ def check_valid_user(token, db: Session = Depends(get_db)):
     except InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token value")
 
-    user = db.query(UserModel).filter(UserModel.id == user_id).first()      # query the database for a user with the given id from the token
+    user = db.query(UserModel).filter(UserModel.User_ID == user_id).first()      # query the database for a user with the given id from the token
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
     return user
-
-def get_user_clearance(user, db: Session = Depends(get_db)):
-    clearance = db.query(UserModel.Clearance).filter(UserModel.id == user.id).scalar()    # query the database for the users clearance level
-    
-    if clearance is None:
-        raise HTTPException(status_code=401, detail="User clearance not found")
-    else:
-        return clearance
-
-@router.post("/create", response_model=User, summary="create a new user")
-async def add_user(username: str, password: str, clearance: str, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    """create a new user"""
-    user = check_valid_user(token, db)                                  # check if logged in user exists
-    user_clearance = get_user_clearance(user, db)                       # get users clearance
-    
-    if user_clearance != "Officer":                                     # check if user is an officer
-        raise HTTPException(status_code=403, detail="insufficient clearance: only officers can create users")
-
-    existing_user = crud_user.get_user_by_username(db, username)        # get any exisiting user with the same username
-    if existing_user:                                                   # check if user exists
-        raise HTTPException(status_code=409, detail="Username already exists")
-    
-    if clearance not in ["Officer", "Civilian"]:                        # check if new user clearance level is valid
-        raise HTTPException(status_code=400, detail="Invalid clearance level: must be 'Officer' or 'Civilian'")
-    
-    new_user = crud_user.create_user(db, username, password, clearance) # create new user
-    return new_user
 
 @router.post("/token/get", response_model=Token, summary="provide token")
 async def issue_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
@@ -76,7 +50,8 @@ async def issue_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token = create_access_token(cast(int, user.id))                              # create tokenr
+    
+    access_token = create_access_token(cast(int, user.User_ID))                         # create token
     
     return {
         "access_token": access_token,
@@ -88,7 +63,7 @@ async def issue_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 async def refresh_token(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """refresh the current token by revoking the old one and issuing a new one"""
     user = check_valid_user(token, db)                                                  # check if logged in user still exists
-    access_token = create_access_token(cast(int, user.id))                              # create new token              
+    access_token = create_access_token(cast(int, user.User_ID))                         # create new token
     
     return {
         "access_token": access_token,
