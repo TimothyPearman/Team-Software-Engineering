@@ -57,7 +57,12 @@ def get_npm_command() -> str:
 
 def ensure_frontend_dependencies() -> None:
     node_modules = FRONTEND_DIR / "node_modules"
-    if node_modules.exists():
+    vite_bin = (
+        FRONTEND_DIR / "node_modules" / ".bin" / ("vite.cmd" if os.name == "nt" else "vite")
+    )
+
+    # node_modules can exist in a broken or partial state; verify vite is present.
+    if node_modules.exists() and vite_bin.exists():
         return
 
     print("Frontend dependencies not found. Running npm install...")
@@ -99,7 +104,7 @@ def open_in_browser_when_ready(
             with urlopen(health_url, timeout=1):
                 open_url_in_browser(open_url)
                 return
-        except URLError:
+        except (URLError, TimeoutError, OSError):
             time.sleep(0.5)
 
 
@@ -153,6 +158,6 @@ if __name__ == "__main__":
             print("Tip: if frontend still fails, run 'npm install' inside frontend.")
         exit_code = 1
     finally:
-        stop_process(frontend_process)
         stop_process(backend_process)
+        stop_process(frontend_process)
         sys.exit(exit_code)

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import Login from '../pages/Login.jsx'
+import Register from '../pages/Register.jsx'
 import Home from '../pages/Home.jsx'
 import Profile from '../pages/Profile.jsx'
 import Test from '../pages/Test.jsx'
@@ -89,7 +91,8 @@ function App() {
             }}
           >
             {/* dropdown menu options */}
-            <Link to="/" style={menuButtonStyle}>Home</Link>
+            <Link to="/" style={menuButtonStyle}>Login</Link>
+            <Link to="/home" style={menuButtonStyle}>Home</Link>
             <Link to="/profile" style={menuButtonStyle}>Profile</Link>
             <Link to="/test" style={menuButtonStyle}>Test</Link>
             <Link to="/more" style={menuButtonStyle}>More</Link>
@@ -100,7 +103,9 @@ function App() {
 
       {/* file paths for different pages */}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/test" element={<Test />} />
         <Route path="/more" element={<More />} />
