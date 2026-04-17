@@ -11,15 +11,28 @@ function Login({ onLoginSuccess, onLogout }) {
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleLogout = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('username')
-    setIsLoggedInView(false)
-    setLoggedInUsername('')
-    setUsername('')
-    setPassword('')
-    setError('')
-    onLogout?.()
+  const handleLogout = async () => {
+    const token = localStorage.getItem('access_token')
+
+    try {
+      if (token) {
+        await fetch('http://localhost:8000/auth/token/revoke', {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      }
+    } finally {
+      localStorage.removeItem('access_token')
+      localStorage.removeItem('username')
+      setIsLoggedInView(false)
+      setLoggedInUsername('')
+      setUsername('')
+      setPassword('')
+      setError('')
+      onLogout?.()
+    }
   }
 
   const handleSubmit = async (event) => {
@@ -63,7 +76,7 @@ function Login({ onLoginSuccess, onLogout }) {
       <section className="login-box">
         {isLoggedInView ? (
           <div className="logged-in-panel">
-            <h1>Logged In</h1>
+            <h1 style={{color: '#13f0e5' }}>Logged In</h1>
             <p className="login-username">user: {loggedInUsername || 'User'}</p>
             <button type="button" className="login-button" onClick={handleLogout}>
               Log out
@@ -71,7 +84,7 @@ function Login({ onLoginSuccess, onLogout }) {
           </div>
         ) : (
           <>
-            <h1>Login Page</h1>
+            <h1 style={{color: '#13f0e5' }}>Login Page</h1>
 
             <form className="login-form" onSubmit={handleSubmit}>
               <div className="login-field">

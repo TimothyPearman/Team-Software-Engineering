@@ -44,7 +44,7 @@ function Register() {
 	return (
 		<main className="login-page">
 			<section className="login-box">
-				<h1>Register Page</h1>
+				<h1 style={{color: '#13f0e5' }}>Register Page</h1>
 
 				<form className="login-form" onSubmit={handleSubmit}>
 					<div className="login-field">

@@ -1,8 +1,0 @@
-fastapi
-mysqlclient
-uvicorn
-sqlalchemy
-pymysql
-python-multipart
-PyJWT
-cryptography 

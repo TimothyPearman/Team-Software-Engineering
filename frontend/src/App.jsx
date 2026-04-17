@@ -1,56 +1,25 @@
-import { useEffect, useRef, useState } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom'
 import Login from '../pages/Login.jsx'
 import Register from '../pages/Register.jsx'
 import Home from '../pages/Home.jsx'
 import Profile from '../pages/Profile.jsx'
 import './App.css'
 
+function ProtectedRoute({ isLoggedIn, children }) {
+  const hasToken = Boolean(localStorage.getItem('access_token'))
+
+  if (!isLoggedIn || !hasToken) {
+    return <Navigate to="/" replace />
+  }
+
+  return children
+}
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(localStorage.getItem('access_token')))
   {/* toggles the dropdown menu */}
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  {/* gets the position of the dropdown menu button */}
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 })
-  {/* reference to the dropdown menu button */}
-  const dropdownButtonRef = useRef(null)
-  {/* displays the fetched lesson data */}
-  const API_URL = "http://localhost:8000/"
-
-  {/* style for the dropdown menu options */}
-  const menuButtonStyle = {
-    border: '1px solid #13f0e5',
-    backgroundColor: '#888;',
-    padding: '6px 10px',
-    borderRadius: '4px',
-    color: '#13f0e5',
-    font: 'inherit',
-    display: 'inline-block',
-    textAlign: 'center',
-    textDecoration: 'none',
-    cursor: 'pointer',
-  }
-
-  {/* updates the position of the dropdown menu */}
-  useEffect(() => {
-    const updateDropdownPosition = () => {
-      if (!dropdownButtonRef.current) {
-        return
-      }
-
-      const rect = dropdownButtonRef.current.getBoundingClientRect()  // gets the position of the dropdown menu button
-      const spacing = 12  
-      setDropdownPosition({         // sets the position of the dropdown menu below the button
-        top: rect.bottom + spacing,
-        left: rect.left,
-      })
-    }
-
-    updateDropdownPosition()
-    window.addEventListener('resize', updateDropdownPosition)
-
-    return () => window.removeEventListener('resize', updateDropdownPosition)
-  }, [])
 
   return (
     <BrowserRouter>
@@ -58,42 +27,30 @@ function App() {
         {/* header */}
         <Link
           to="/"
-          style={{ position: 'fixed', top: '12px', left: '12px', margin: 0, zIndex: 1000, color: '#13f0e5', textDecoration: 'none' }}
+          className="app-header-link"
         >
-          <h1 style={{ margin: 0, color: 'inherit' }}>CompuTaught</h1>
+          <h1 className="app-title">CompuTaught</h1>
         </Link>
 
         {isLoggedIn && (
-          <button
-            ref={dropdownButtonRef}                             // reference to the button element
-            type="button"
-            onClick={() => setIsDropdownOpen((prev) => !prev)}  // toggles the drop down menu
-            style={{ ...menuButtonStyle, position: 'fixed', top: '120px', left: '12px', zIndex: 1000 }}  // fixes the button below the header
-          >
-            Drop-down menu
-          </button>
-        )}
+          <div className="app-dropdown-shell">
+            <button
+              type="button"
+              className="app-dropdown-trigger"
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+            >
+              Drop-down menu
+            </button>
 
-        {/* dropdown menu */}
-        {isLoggedIn && isDropdownOpen && (
-          <div
-            style={{
-              position: 'fixed',                  // fixes the dropdown menu
-              top: `${dropdownPosition.top}px`,   // positions the dropdown menu below the button
-              left: `${dropdownPosition.left}px`, // aligns the dropdown menu with the button
-              //backgroundColor: 'white',
-              //border: '1px solid #ccc',
-              padding: '8px',                     // padding around the dropdown menu
-              zIndex: 1000,                       // ensures the dropdown menu appears above other content
-              display: 'flex',                    // uses flexbox for layout
-              flexDirection: 'column',            // arranges the dropdown options in a column
-              gap: '8px',                         // space between the dropdown options           
-            }}
-          >
-            {/* dropdown menu options */}
-            <Link to="/home" style={menuButtonStyle}>Home</Link>
-            <Link to="/profile" style={menuButtonStyle}>Profile</Link>
-            <Link to="/" style={menuButtonStyle}>Logout</Link>
+            {/* dropdown menu */}
+            {isDropdownOpen && (
+              <div className="app-dropdown-menu">
+                {/* dropdown menu options */}
+                <Link to="/home" className="app-dropdown-link">Home</Link>
+                <Link to="/profile" className="app-dropdown-link">Profile</Link>
+                <Link to="/" className="app-dropdown-link">Logout</Link>
+              </div>
+            )}
           </div>
         )}
 
@@ -114,8 +71,22 @@ function App() {
           )}
         />
         <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/home"
+          element={(
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Home />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/profile"
+          element={(
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Profile />
+            </ProtectedRoute>
+          )}
+        />
       </Routes>
     </BrowserRouter>
   )

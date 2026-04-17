@@ -104,3 +104,49 @@
 	font-weight: 600;
 	color: #13f0e5;
 }
+
+.profile-sections {
+	width: 100%;
+	margin-top: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.profile-section {
+	padding: 12px;
+	border-radius: 8px;
+	border: 1px solid #13f0e5;
+	background-color: #242424;
+	color: #e7fffd;
+	text-align: left;
+}
+
+.profile-section-title {
+	margin: 0 0 10px;
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: #13f0e5;
+	text-decoration: underline;
+	text-underline-offset: 4px;
+}
+
+.profile-row {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	margin-bottom: 8px;
+	line-height: 1.4;
+}
+
+.profile-label {
+	min-width: 110px;
+	font-weight: 700;
+	color: #13f0e5;
+	flex-shrink: 0;
+}
+
+.profile-value {
+	color: #e7fffd;
+	word-break: break-word;
+}

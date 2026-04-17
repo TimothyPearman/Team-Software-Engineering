@@ -24,10 +24,10 @@ function Home() {
       <img className="home-background-image" src={backGroundImg} alt=""/>
 
       <div className="home-content">
-        <h1>Home</h1>
+        <h1 style={{color: '#13f0e5' }}>Home</h1>
 
         {/* data fetched from level endpoint*/}
-        <button type="button" onClick={fetchLesson}>
+        <button type="button" className="level-button" onClick={fetchLesson}>
           Fetch Level
         </button>
 
