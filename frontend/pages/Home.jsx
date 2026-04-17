@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import backGroundImg from '../src/assets/green.png'
+import './Home.css'
 
 const API_URL = "http://localhost:8000/"
 
@@ -18,15 +20,19 @@ function Home() {
   }
 
   return (
-    <div>
-      <h1>Home</h1>
+    <div className="home-page">
+      <img className="home-background-image" src={backGroundImg} alt=""/>
 
-      {/* data fetched from level endpoint*/}
-      <button type="button" onClick={fetchLesson}>
-        Fetch Level
-      </button>
-          
-      <p>{lessonOutput}</p>
+      <div className="home-content">
+        <h1>Home</h1>
+
+        {/* data fetched from level endpoint*/}
+        <button type="button" onClick={fetchLesson}>
+          Fetch Level
+        </button>
+
+        <p>{lessonOutput}</p>
+      </div>
     </div>
   )
 }

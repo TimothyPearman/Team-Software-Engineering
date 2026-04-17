@@ -2,12 +2,25 @@ import './Login.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function Login() {
+function Login({ onLoginSuccess, onLogout }) {
   const navigate = useNavigate()
+  const [isLoggedInView, setIsLoggedInView] = useState(Boolean(localStorage.getItem('access_token')))
+  const [loggedInUsername, setLoggedInUsername] = useState(localStorage.getItem('username') || '')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('username')
+    setIsLoggedInView(false)
+    setLoggedInUsername('')
+    setUsername('')
+    setPassword('')
+    setError('')
+    onLogout?.()
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -34,6 +47,9 @@ function Login() {
 
       localStorage.setItem('access_token', data.access_token)
       localStorage.setItem('username', username)
+      setIsLoggedInView(true)
+      setLoggedInUsername(username)
+      onLoginSuccess?.()
       navigate('/home')
     } catch (loginError) {
       setError(loginError.message)
@@ -45,53 +61,65 @@ function Login() {
   return (
     <main className="login-page">
       <section className="login-box">
-        <h1>Login Page</h1>
-
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="login-field">
-            <label htmlFor="username">Username:</label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              className="login-input"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              autoComplete="username"
-              required
-            />
-          </div>
-
-          <div className="login-field">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className="login-input"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="current-password"
-              required
-            />
-          </div>
-
-          {error && <p className="login-error" role="alert">{error}</p>}
-
-          <div className="login-actions">
-            <button
-              type="button"
-              className="register-button"
-              onClick={() => navigate('/register')}
-            >
-              Register
-            </button>
-
-            <button type="submit" className="login-button" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'submit'}
+        {isLoggedInView ? (
+          <div className="logged-in-panel">
+            <h1>Logged In</h1>
+            <p className="login-username">user: {loggedInUsername || 'User'}</p>
+            <button type="button" className="login-button" onClick={handleLogout}>
+              Log out
             </button>
           </div>
-        </form>
+        ) : (
+          <>
+            <h1>Login Page</h1>
+
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="login-field">
+                <label htmlFor="username">Username:</label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  className="login-input"
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
+                  autoComplete="username"
+                  required
+                />
+              </div>
+
+              <div className="login-field">
+                <label htmlFor="password">Password</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  className="login-input"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  autoComplete="current-password"
+                  required
+                />
+              </div>
+
+              {error && <p className="login-error" role="alert">{error}</p>}
+
+              <div className="login-actions">
+                <button
+                  type="button"
+                  className="register-button"
+                  onClick={() => navigate('/register')}
+                >
+                  Register
+                </button>
+
+                <button type="submit" className="login-button" disabled={isSubmitting}>
+                  {isSubmitting ? 'Submitting...' : 'submit'}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
       </section>
     </main>
   )

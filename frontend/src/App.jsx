@@ -4,11 +4,10 @@ import Login from '../pages/Login.jsx'
 import Register from '../pages/Register.jsx'
 import Home from '../pages/Home.jsx'
 import Profile from '../pages/Profile.jsx'
-import Test from '../pages/Test.jsx'
-import More from '../pages/More.jsx'
 import './App.css'
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(Boolean(localStorage.getItem('access_token')))
   {/* toggles the dropdown menu */}
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   {/* gets the position of the dropdown menu button */}
@@ -64,18 +63,19 @@ function App() {
           <h1 style={{ margin: 0, color: 'inherit' }}>CompuTaught</h1>
         </Link>
 
-        {/* drop down menu button */}
-        <button
-          ref={dropdownButtonRef}                             // reference to the button element
-          type="button"
-          onClick={() => setIsDropdownOpen((prev) => !prev)}  // toggles the drop down menu
-          style={{ ...menuButtonStyle, position: 'fixed', top: '120px', left: '12px', zIndex: 1000 }}  // fixes the button below the header
-        >
-          Drop-down menu
-        </button>
+        {isLoggedIn && (
+          <button
+            ref={dropdownButtonRef}                             // reference to the button element
+            type="button"
+            onClick={() => setIsDropdownOpen((prev) => !prev)}  // toggles the drop down menu
+            style={{ ...menuButtonStyle, position: 'fixed', top: '120px', left: '12px', zIndex: 1000 }}  // fixes the button below the header
+          >
+            Drop-down menu
+          </button>
+        )}
 
         {/* dropdown menu */}
-        {isDropdownOpen && (
+        {isLoggedIn && isDropdownOpen && (
           <div
             style={{
               position: 'fixed',                  // fixes the dropdown menu
@@ -91,11 +91,9 @@ function App() {
             }}
           >
             {/* dropdown menu options */}
-            <Link to="/" style={menuButtonStyle}>Login</Link>
             <Link to="/home" style={menuButtonStyle}>Home</Link>
             <Link to="/profile" style={menuButtonStyle}>Profile</Link>
-            <Link to="/test" style={menuButtonStyle}>Test</Link>
-            <Link to="/more" style={menuButtonStyle}>More</Link>
+            <Link to="/" style={menuButtonStyle}>Logout</Link>
           </div>
         )}
 
@@ -103,12 +101,21 @@ function App() {
 
       {/* file paths for different pages */}
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route
+          path="/"
+          element={(
+            <Login
+              onLoginSuccess={() => setIsLoggedIn(true)}
+              onLogout={() => {
+                setIsLoggedIn(false)
+                setIsDropdownOpen(false)
+              }}
+            />
+          )}
+        />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/test" element={<Test />} />
-        <Route path="/more" element={<More />} />
       </Routes>
     </BrowserRouter>
   )

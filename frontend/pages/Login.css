@@ -88,3 +88,19 @@
 	margin: 0;
 	color: #ff8080;
 }
+
+.logged-in-panel {
+	width: 100%;
+	max-width: 320px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+}
+
+.login-username {
+	margin: 0;
+	font-size: 1.1rem;
+	font-weight: 600;
+	color: #13f0e5;
+}
