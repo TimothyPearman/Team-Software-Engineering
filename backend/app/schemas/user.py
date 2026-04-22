@@ -11,5 +11,4 @@ class FullUserSchema(BaseModel):
     Count: int
     Name: str
     Description: str | None
-    Asset: str | None
     Level_ID: int | None

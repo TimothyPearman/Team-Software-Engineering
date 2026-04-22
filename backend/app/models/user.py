@@ -15,5 +15,4 @@ class FullUser(Base):
     Count = Column(Integer, nullable=False)
     Name = Column(String(100), nullable=False)
     Description = Column(String(255), nullable=True)
-    Asset = Column(String(255), nullable=True)
     Level_ID = Column(Integer, nullable=True)

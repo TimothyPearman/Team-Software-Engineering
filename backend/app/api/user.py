@@ -41,7 +41,7 @@ async def create_user(username: str, password: str, db: Session = Depends(get_db
     if existing_user:
         raise HTTPException(status_code=409, detail="Username already exists")
 
-    new_user = user_crud.create_user(db, username, password)
+    new_user = auth_crud.create_user(db, username, password, clearance="user")
     return new_user
 
 
