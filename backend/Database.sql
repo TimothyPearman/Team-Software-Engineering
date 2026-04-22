@@ -52,7 +52,6 @@ CREATE TABLE `Badge` (
     `Badge_ID` INT NOT NULL AUTO_INCREMENT,
     `Name` VARCHAR(100) NOT NULL,
     `Description` VARCHAR(255),
-    `Asset` VARCHAR(255),
     CONSTRAINT `pk_Badge` PRIMARY KEY (`Badge_ID`)
 );
 
@@ -129,10 +128,10 @@ VALUES ("1111-11-1 11:11:11", "1111-11-2 11:11:11",1);
 INSERT INTO `Streak`(StartDate,EndDate,Count)
 VALUES ("1111-11-4 11:11:11", "1111-11-6 11:11:11",2);
 
-INSERT INTO `Badge`(Name,Description,Asset)
-VALUES ("badge1", "badge_desc","/assets/badge1");
-INSERT INTO `Badge`(Name,Description,Asset)
-VALUES ("badge2", "badge_desc","/assets/badge2");
+INSERT INTO `Badge`(Name,Description)
+VALUES ("badge1", "badge_desc");
+INSERT INTO `Badge`(Name,Description)
+VALUES ("badge2", "badge_desc");
 
 INSERT INTO `Level`(Dictionary_ID)
 VALUES (1);
@@ -223,7 +222,7 @@ CREATE OR REPLACE SQL SECURITY DEFINER VIEW `Full_User` AS
 SELECT 
     `User`.User_ID,Username,`User`.Password_Hash,
     `Streak`.StartDate,`Streak`.EndDate,`Streak`.Count,
-    `Badge`.Name,`Badge`.Description,`Badge`.Asset,
+    `Badge`.Name,`Badge`.Description,
     `Progress`.Level_ID
 FROM `User`
 INNER JOIN `Streak`
@@ -269,7 +268,7 @@ ORDER BY `User`.User_ID ASC;
 CREATE OR REPLACE SQL SECURITY DEFINER VIEW `User_Badges` AS
 SELECT 
 	`User`.User_ID,
-    `Badge`.Name,`Badge`.Description,`Badge`.Asset
+    `Badge`.Name,`Badge`.Description
 FROM `User`
 INNER JOIN `User_Badge`
 	ON `User`.User_ID = `User_Badge`.User_ID
