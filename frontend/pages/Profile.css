@@ -1,11 +1,11 @@
-.login-page {
+.page {
 	min-height: 100vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.login-box {
+.box {
 	width: 100%;
 	max-width: 420px;
 	padding: 32px;
@@ -123,12 +123,157 @@
 }
 
 .profile-section-title {
-	margin: 0 0 10px;
+	margin: 0;
 	font-size: 1.5rem;
 	font-weight: 700;
 	color: #13f0e5;
 	text-decoration: underline;
 	text-underline-offset: 4px;
+}
+
+.profile-section-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 10px;
+}
+
+.profile-expand-button {
+	padding: 6px 12px;
+	border-radius: 8px;
+	border: 1px solid #13f0e5;
+	background-color: transparent;
+	color: #13f0e5;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.expanded-box {
+	max-width: 420px;
+	gap: 12px;
+}
+
+.expanded-text {
+	margin: 0;
+	font-size: 1.05rem;
+	color: #e7fffd;
+	text-transform: lowercase;
+}
+
+.expanded-content {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.expanded-message {
+	margin: 0;
+	color: #e7fffd;
+}
+
+.badge-id-row {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.badge-id-input {
+	flex: 1;
+	min-width: 0;
+	padding: 8px 10px;
+	border-radius: 8px;
+	border: 1px solid rgba(19, 240, 229, 0.65);
+	background-color: #242424;
+	color: #e7fffd;
+}
+
+.badge-update-button {
+	padding: 8px 12px;
+	border-radius: 8px;
+	border: 1px solid #13f0e5;
+	background-color: transparent;
+	color: #13f0e5;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.streak-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+}
+
+.streak-card {
+	padding: 12px;
+	border-radius: 8px;
+	border: 1px solid rgba(19, 240, 229, 0.45);
+	background-color: rgba(0, 0, 0, 0.14);
+	text-align: left;
+}
+
+.streak-row {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	margin-bottom: 8px;
+	line-height: 1.4;
+	flex-wrap: wrap;
+}
+
+.streak-label {
+	min-width: 110px;
+	font-weight: 700;
+	color: #13f0e5;
+	flex-shrink: 0;
+}
+
+.streak-value {
+	color: #e7fffd;
+	word-break: break-word;
+}
+
+.badge-card-content {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.badge-button-row {
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.badge-favourite-button {
+	padding: 6px 10px;
+	border-radius: 8px;
+	border: 1px solid #13f0e5;
+	background-color: transparent;
+	color: #13f0e5;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.badge-text-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.badge-image {
+	width: 72px;
+	height: 72px;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+.expanded-back-button {
+	max-width: 180px;
 }
 
 .profile-row {
@@ -150,3 +295,4 @@
 	color: #e7fffd;
 	word-break: break-word;
 }
+

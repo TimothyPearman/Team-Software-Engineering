@@ -129,20 +129,20 @@ INSERT INTO `Streak`(StartDate,EndDate,Count)
 VALUES ("1111-11-4 11:11:11", "1111-11-6 11:11:11",2);
 
 INSERT INTO `Badge`(Name,Description)
-VALUES ("badge1", "badge_desc");
+VALUES ("welcome", "create an account");
 INSERT INTO `Badge`(Name,Description)
-VALUES ("badge2", "badge_desc");
+VALUES ("first steps", "complete the first level");
 
 INSERT INTO `Level`(Dictionary_ID)
 VALUES (1);
 
 INSERT INTO `Dictionary`(Description)
-VALUES ("dict_desc");
+VALUES ("print - outputs to the terminal, if - checks a condition");
 
 INSERT INTO `Question`(Level_ID,Question,Answer)
-VALUES (1,"question1","answer");
+VALUES (1,"what command outputs to the terminal?","print");
 INSERT INTO `Question`(Level_ID,Question,Answer)
-VALUES (1,"question2","answer");
+VALUES (1,"what command checks a condition?","if");
 COMMIT;
 
 START TRANSACTION;
@@ -150,7 +150,7 @@ INSERT INTO `Progress`(Score,Level_ID)
 VALUES ("999", "1");
 SET @ProgressID = LAST_INSERT_ID();
 INSERT INTO `User`(Username,Password_Hash,CurrentStreak_ID,FavouriteBadge_ID,Progress_ID)
-VALUES ("timmy", "TPass",1,1,@ProgressID);
+VALUES ("timmy", "$2b$12$6POCB3hmuJW227fJOcr0B.YQIXfeZgIrLnBtexe.ORff5O8ZcfyAu",1,1,@ProgressID);
 
 INSERT INTO `User_Streak`(User_ID,Streak_ID)
 VALUES (1,1);
@@ -222,8 +222,8 @@ CREATE OR REPLACE SQL SECURITY DEFINER VIEW `Full_User` AS
 SELECT 
     `User`.User_ID,Username,`User`.Password_Hash,
     `Streak`.StartDate,`Streak`.EndDate,`Streak`.Count,
-    `Badge`.Name,`Badge`.Description,
-    `Progress`.Level_ID
+    `Badge`.Badge_ID,`Badge`.Name,`Badge`.Description,
+    `Progress`.Level_ID,`Progress`.Score
 FROM `User`
 INNER JOIN `Streak`
 	ON `User`.CurrentStreak_ID = `Streak`.Streak_ID
@@ -268,6 +268,7 @@ ORDER BY `User`.User_ID ASC;
 CREATE OR REPLACE SQL SECURITY DEFINER VIEW `User_Badges` AS
 SELECT 
 	`User`.User_ID,
+    `Badge`.Badge_ID,
     `Badge`.Name,`Badge`.Description
 FROM `User`
 INNER JOIN `User_Badge`

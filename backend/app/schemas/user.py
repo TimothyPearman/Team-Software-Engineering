@@ -9,6 +9,8 @@ class FullUserSchema(BaseModel):
     StartDate: date
     EndDate: date | None
     Count: int
+    Badge_ID: int
     Name: str
     Description: str | None
     Level_ID: int | None
+    Score: int | None

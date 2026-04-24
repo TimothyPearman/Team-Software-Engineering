@@ -5,4 +5,4 @@ sqlalchemy
 pymysql
 python-multipart
 PyJWT
-cryptography 
+bcrypt

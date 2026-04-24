@@ -8,6 +8,7 @@ from ..crud import auth as auth_crud
 from ..crud import user as user_crud
 from ..db.session import get_db
 from ..schemas.auth import UserSchema
+from ..schemas.badge import BadgeSchema
 from ..schemas.user import FullUserSchema as FullUser
 
 # Create a router for all user-related endpoints.
@@ -41,17 +42,24 @@ async def create_user(username: str, password: str, db: Session = Depends(get_db
     if existing_user:
         raise HTTPException(status_code=409, detail="Username already exists")
 
-    new_user = auth_crud.create_user(db, username, password, clearance="user")
+    new_user = auth_crud.create_user(db, username, password)
     return new_user
 
 
 """
 PUT Endpoints:
 """
-# @router.put("/put", response_model=FullUser, summary="?")
-# async def update_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-#     """?"""
-#     return None
+@router.put("/badge/put", response_model=BadgeSchema, summary="update a badge")
+async def update_badge(badge_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """Update a badge record."""
+    user_id = get_user_id_from_token(token)
+    updated_badge = user_crud.update_badge(
+        db,
+        user_id,
+        badge_id,
+    )
+
+    return updated_badge
 
 
 """

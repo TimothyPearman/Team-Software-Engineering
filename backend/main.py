@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
-from app.api import auth, dictionary, level, question, streak, user    # import the routers to be registered with the main app
+from app.api import auth, badge, dictionary, level, question, streak, user    # import the routers to be registered with the main app
 from app.db.init_db import init_db  # import the database initialization function to ensure tables exist on startup
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -38,6 +38,7 @@ app.include_router(dictionary.router)
 app.include_router(level.router)
 app.include_router(question.router)
 app.include_router(streak.router)
+app.include_router(badge.router)
 app.include_router(user.router)
 
 # root endpoint for debugging1

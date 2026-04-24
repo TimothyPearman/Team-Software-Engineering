@@ -1,10 +1,13 @@
-from typing import Optional, cast
+from typing import Optional, cast, Any
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from ..models.user import FullUser as FullUserModel
 from ..models.auth import User as UserModel
+from ..models.badge import Badge as BadgeModel
+
+from ..crud.badge import get_badge_by_id
 
 
 def get_full_user(db: Session, user_id: int) -> Optional[FullUserModel]:
@@ -38,3 +41,22 @@ def delete_user(db: Session, user_id: int) -> UserModel:
     db.commit()
 
     return user
+
+def update_badge(db: Session, user_id: int, badge_id: int) -> BadgeModel:
+    """Update the user's favorite badge."""
+    # Verify the badge exists
+    badge = get_badge_by_id(db, badge_id)
+    
+    # Get the user and update their favorite badge
+    user = cast(Optional[UserModel], db.query(UserModel).filter(UserModel.User_ID == user_id).first())
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Update the user's favorite badge
+    user_row = cast(Any, user)
+    user_row.FavouriteBadge_ID = badge_id
+    db.commit()
+    db.refresh(user)
+    
+    return badge
