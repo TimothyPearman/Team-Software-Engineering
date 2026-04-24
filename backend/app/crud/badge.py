@@ -31,17 +31,3 @@ def get_badge_by_id(db: Session, badge_id: int) -> BadgeModel:
         raise HTTPException(status_code=404, detail="Badge not found")
 
     return badge
-
-
-def update_badge(db: Session, badge_id: int) -> BadgeModel:
-    """Update a badge record."""
-    badge = get_badge_by_id(db, badge_id)
-    badge_row = cast(Any, badge)
-
-    badge_row.Name = name
-    badge_row.Description = description
-
-    db.commit()
-    db.refresh(badge)
-
-    return badge

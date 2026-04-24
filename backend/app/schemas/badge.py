@@ -12,17 +12,6 @@ class UserBadgeSchema(BaseModel):
     class Config:
         from_attributes = True
 
-
-class BadgeUpdateSchema(BaseModel):
-    """Schema for updating a badge record."""
-
-    Name: str
-    Description: str | None
-
-    class Config:
-        from_attributes = True
-
-
 class BadgeSchema(BaseModel):
     """Schema returned after updating a badge record."""
 
