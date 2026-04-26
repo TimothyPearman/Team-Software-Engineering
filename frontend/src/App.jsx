@@ -7,9 +7,21 @@ import Profile from '../pages/Profile.jsx'
 import './App.css'
 
 function ProtectedRoute({ isLoggedIn, children }) {
-  const hasToken = Boolean(localStorage.getItem('access_token'))
+  const isTokenValid = () => {
+    const token = localStorage.getItem('access_token')
+    if (!token) return false
 
-  if (!isLoggedIn || !hasToken) {
+    try {
+      // JWT tokens are in format: header.payload.signature
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      const currentTime = Math.floor(Date.now() / 1000)
+      return payload.exp > currentTime
+    } catch (e) {
+      return false
+    }
+  }
+
+  if (!isLoggedIn || !isTokenValid()) {
     return <Navigate to="/" replace />
   }
 

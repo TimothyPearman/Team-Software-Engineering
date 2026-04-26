@@ -4,7 +4,22 @@ import { useNavigate } from 'react-router-dom'
 
 function Login({ onLoginSuccess, onLogout }) {
   const navigate = useNavigate()
-  const [isLoggedInView, setIsLoggedInView] = useState(Boolean(localStorage.getItem('access_token')))
+
+  const isTokenValid = () => {
+    const token = localStorage.getItem('access_token')
+    if (!token) return false
+
+    try {
+      // JWT tokens are in format: header.payload.signature
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      const currentTime = Math.floor(Date.now() / 1000)
+      return payload.exp > currentTime
+    } catch (e) {
+      return false
+    }
+  }
+
+  const [isLoggedInView, setIsLoggedInView] = useState(isTokenValid())
   const [loggedInUsername, setLoggedInUsername] = useState(localStorage.getItem('username') || '')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
