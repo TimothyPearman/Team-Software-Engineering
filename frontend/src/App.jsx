@@ -5,12 +5,23 @@ import Register from '../pages/Register.jsx'
 import Home from '../pages/Home.jsx'
 import Profile from '../pages/Profile.jsx'
 import './App.css'
-import Quiz from '../pages/Quiz.jsx'
 
 function ProtectedRoute({ isLoggedIn, children }) {
-  const hasToken = Boolean(localStorage.getItem('access_token'))
+  const isTokenValid = () => {
+    const token = localStorage.getItem('access_token')
+    if (!token) return false
 
-  if (!isLoggedIn || !hasToken) {
+    try {
+      // JWT tokens are in format: header.payload.signature
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      const currentTime = Math.floor(Date.now() / 1000)
+      return payload.exp > currentTime
+    } catch (e) {
+      return false
+    }
+  }
+
+  if (!isLoggedIn || !isTokenValid()) {
     return <Navigate to="/" replace />
   }
 
@@ -49,7 +60,6 @@ function App() {
                 {/* dropdown menu options */}
                 <Link to="/home" className="app-dropdown-link">Home</Link>
                 <Link to="/profile" className="app-dropdown-link">Profile</Link>
-                <Link to="/quiz" className="app-dropdown-link">Quiz</Link>
                 <Link to="/" className="app-dropdown-link">Logout</Link>
               </div>
             )}
@@ -86,14 +96,6 @@ function App() {
           element={(
             <ProtectedRoute isLoggedIn={isLoggedIn}>
               <Profile />
-            </ProtectedRoute>
-          )}
-        />
-        <Route
-          path="/quiz"
-          element={(
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <Quiz />
             </ProtectedRoute>
           )}
         />
