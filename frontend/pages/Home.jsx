@@ -71,8 +71,18 @@ function Home() {
         e.preventDefault();
         const currentQuestion = questions[currentQuestionIndex];
         
+        const answer = userAnswer.trim().toLowerCase();
+
+        // answer input validation
+        const answers = ['a', 'b', 'c', 'd'];
+        if (!answers.includes(answer)) {
+            setError('Invalid answer. Please enter A, B, C, or D.');
+            return;
+        }
+        setError('');
+        
         // Simple string comparison (ignoring case/whitespace)
-        if (userAnswer.trim().toLowerCase() === currentQuestion.Answer.trim().toLowerCase()) {
+        if (answer === currentQuestion.Answer.trim().toLowerCase()) {
             setScore(score + 1);
         }
 
