@@ -73,3 +73,12 @@
     font-weight: bold;
     margin: 0;
 }
+
+.dictionary-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    border: 1px solid #13f0e5;
+	color: #13f0e5;
+    z-index: 1000; /* Ensure it appears above other content */
+}
