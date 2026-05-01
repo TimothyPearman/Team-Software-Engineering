@@ -129,84 +129,32 @@ INSERT INTO `Streak`(StartDate,EndDate,Count)
 VALUES ("1111-11-4 11:11:11", "1111-11-6 11:11:11",2);
 
 INSERT INTO `Badge`(Name,Description)
-VALUES ("welcome", "create an account");
+VALUES ("badge1", "badge_desc");
 INSERT INTO `Badge`(Name,Description)
-VALUES ("first steps", "complete the first level");
+VALUES ("badge2", "badge_desc");
 
+INSERT INTO `Level`(Dictionary_ID)
+VALUES (1);
+INSERT INTO `Level`(Dictionary_ID)
+VALUES (1);
 INSERT INTO `Level`(Dictionary_ID)
 VALUES (1);
 
 INSERT INTO `Dictionary`(Description)
-VALUES ("print - outputs to the terminal, if - checks a condition");
+VALUES ("dict_desc");
 
--- ---------------------------------------------------------------------- #
--- Insert Levels 2, 3, 4, 5
--- ---------------------------------------------------------------------- #
-START TRANSACTION;
-INSERT INTO `Level`(Dictionary_ID) VALUES (1); -- Level 2
-INSERT INTO `Level`(Dictionary_ID) VALUES (1); -- Level 3
-INSERT INTO `Level`(Dictionary_ID) VALUES (1); -- Level 4
-INSERT INTO `Level`(Dictionary_ID) VALUES (1); -- Level 5
+INSERT INTO `Question`(Level_ID,Question,Answer)
+VALUES (1,"question1","answer");
+INSERT INTO `Question`(Level_ID,Question,Answer)
+VALUES (1,"question2","answer");
 COMMIT;
-
-
--- ---------------------------------------------------------------------- #
--- Insert Questions (Levels 1 to 5)
--- ---------------------------------------------------------------------- #
-START TRANSACTION;
-
--- Level 1 (Beginner)
-INSERT INTO `Question`(Level_ID, Question, Answer) VALUES 
-(1, 'What does SQL stand for?\nA) Simple Query Language\nB) Structured Query Language\nC) Sequential Query Link\nD) Standard Question List', 'B'),
-(1, 'What is the main circuit board called that holds the CPU?\nA) Power Supply\nB) Motherboard\nC) Hard Drive\nD) Graphics Card', 'B'),
-(1, 'Which type of memory is "volatile" (loses data when power is off)?\nA) ROM\nB) SSD\nC) RAM\nD) Flash', 'C'),
-(1, 'Which of these is the correct way to add an item to the end of a list called my_list?\nA) my_list.add("item")\nB) my_list.append("item")\nC) my_list.insert("item")\nD) my_list.push("item")', 'B'),
-(1, 'What is the output of this C++ code?\nstring s="ABC";\ncout << s[1];\nA) A\nB) B\nC) C\nD) ABC', 'B'),
-(1, 'The set of rules and methods that describe the functionality, organization, and implementation of computer systems is known as:\nA) Computer Organization\nB) Computer Architecture\nC) Computer Design\nD) Networking', 'B');
-
--- Level 2 (Easy)
-INSERT INTO `Question`(Level_ID, Question, Answer) VALUES 
-(2, 'What is the output of this Python slice?\ntext = "ComputerScience"\nprint(text[8:])\nA) Computer\nB) Science\nC) ience\nD) ComputerS', 'B'),
-(2, 'What does the M stand for in RAM?\nA) Module\nB) Mainframe\nC) Macro\nD) Memory', 'D'),
-(2, 'Which of the following is not a valid variable name in Python?\nA) my_var\nB) _myvar\nC) 2myvar\nD) myVar2', 'C'),
-(2, 'What is the correct file extension for Python files?\nA) .pyth\nB) .pt\nC) .py\nD) .pyt', 'C'),
-(2, 'In C++, which data type is used to create a variable that should store text?\nA) string\nB) txt\nC) String\nD) myString', 'A'),
-(2, 'Which operator is used to multiply numbers in Python?\nA) x\nB) %\nC) *\nD) #', 'C');
-
--- Level 3 (Medium)
-INSERT INTO `Question`(Level_ID, Question, Answer) VALUES 
-(3, 'In networking, which protocol is primarily used to secure communication over a computer network?\nA) HTTP\nB) HTTPS\nC) FTP\nD) SMTP', 'B'),
-(3, 'Which sorting algorithm works by repeatedly swapping adjacent elements?\nA) Quick Sort\nB) Merge Sort\nC) Bubble Sort\nD) Insertion Sort', 'C'),
-(3, 'What does HTML stand for?\nA) Hyper Text Markup Language\nB) Home Tool Markup Language\nC) Hyperlinks and Text Markup Language\nD) Hyper Tool Markup Language', 'A'),
-(3, 'Which is not an object-oriented programming language?\nA) Java\nB) C++\nC) C\nD) Python', 'C'),
-(3, 'What is the primary function of an operating system?\nA) To play games\nB) To manage hardware and software resources\nC) To compile code\nD) To browse the internet', 'B'),
-(3, 'Which data structure uses LIFO (Last In First Out)?\nA) Queue\nB) Stack\nC) Tree\nD) Graph', 'B');
-
--- Level 4 (Hard)
-INSERT INTO `Question`(Level_ID, Question, Answer) VALUES 
-(4, 'If for an algorithm time complexity is given by O(n) then complexity of it is:\nA) constant\nB) linear\nC) exponential\nD) none of the mentioned', 'B'),
-(4, 'What is the time complexity of binary search?\nA) O(n)\nB) O(n log n)\nC) O(log n)\nD) O(1)', 'C'),
-(4, 'Which design pattern restricts the instantiation of a class to one "single" instance?\nA) Factory\nB) Observer\nC) Singleton\nD) Decorator', 'C'),
-(4, 'In SQL, what is the default sort order of the ORDER BY keyword?\nA) Descending\nB) Ascending\nC) Random\nD) Depends on the database', 'B'),
-(4, 'Which of the following describes the time complexity of an algorithm?\nA) Big (O)\nB) Big (Ω)\nC) Big (θ)\nD) All of the above', 'D'),
-(4, 'How many times the message: "Hello" will be printed if we run the following block of code:\ni = 0\nwhile (i <= 5):\n    print (''Hello'')\n    i = i - 1\nA) None\nB) 1\nC) 5\nD) Infinite', 'D');
-
--- Level 5 (Expert)
-INSERT INTO `Question`(Level_ID, Question, Answer) VALUES 
-(5, 'What is the Big O complexity of the following loop?\nfor (int i = 0; i < n; i++) {\n    for (int j = 0; j < n; j++) {\n        // simple operation\n    }\n}\nA) O(n)\nB) O(log n)\nC) O(n²)\nD) O(1)', 'C'),
-(5, 'What is the output of this Python code?\nx = "123"\ny = int(x[0]) + int(x[2])\nprint(y)\nA) 4\nB) 13\nC) 6\nD) 123', 'A'),
-(5, 'What is the output of this C++ code involving pointers?\nint x = 10;\nint *p = &x;\n*p += 5;\ncout << x;\nA) 10\nB) 5\nC) 15\nD) Error', 'C'),
-(5, 'What happens if you try to dereference a null pointer in C++?\nA) It returns 0\nB) It throws a compiler error\nC) It causes a segmentation fault (undefined behavior)\nD) It returns -1', 'C'),
-(5, 'Which concurrency model does Node.js primarily use?\nA) Multi-threading\nB) Event-driven, non-blocking I/O\nC) Actor model\nD) Coroutines', 'B'),
-(5, 'What is a deadlock in operating systems?\nA) When a thread finishes execution\nB) When two or more processes are waiting indefinitely for an event that can be caused by only one of the waiting processes\nC) When a process is suspended\nD) When memory is fully utilized', 'B');
-
 
 START TRANSACTION;
 INSERT INTO `Progress`(Score,Level_ID)
 VALUES ("999", "1");
 SET @ProgressID = LAST_INSERT_ID();
 INSERT INTO `User`(Username,Password_Hash,CurrentStreak_ID,FavouriteBadge_ID,Progress_ID)
-VALUES ("timmy", "$2b$12$6POCB3hmuJW227fJOcr0B.YQIXfeZgIrLnBtexe.ORff5O8ZcfyAu",1,1,@ProgressID);
+VALUES ("timmy", "TPass",1,1,@ProgressID);
 
 INSERT INTO `User_Streak`(User_ID,Streak_ID)
 VALUES (1,1);
@@ -278,8 +226,9 @@ CREATE OR REPLACE SQL SECURITY DEFINER VIEW `Full_User` AS
 SELECT 
     `User`.User_ID,Username,`User`.Password_Hash,
     `Streak`.StartDate,`Streak`.EndDate,`Streak`.Count,
-    `Badge`.Badge_ID,`Badge`.Name,`Badge`.Description,
-    `Progress`.Level_ID,`Progress`.Score
+    `Badge`.Name,`Badge`.Description,
+    `Progress`.Level_ID,
+    `Progress`.Score
 FROM `User`
 INNER JOIN `Streak`
 	ON `User`.CurrentStreak_ID = `Streak`.Streak_ID
@@ -324,7 +273,6 @@ ORDER BY `User`.User_ID ASC;
 CREATE OR REPLACE SQL SECURITY DEFINER VIEW `User_Badges` AS
 SELECT 
 	`User`.User_ID,
-    `Badge`.Badge_ID,
     `Badge`.Name,`Badge`.Description
 FROM `User`
 INNER JOIN `User_Badge`
