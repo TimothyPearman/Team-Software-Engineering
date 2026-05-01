@@ -60,7 +60,19 @@ function Home() {
                 setUserLevelId(Number(data.Level_ID) || 0);
             })
             .catch(err => setError(err.message));
-    }, []);
+    }, [quizFinished]);
+
+    // calculate score when quiz-finished view is shown
+    useEffect(() => {
+        const run = async () => {
+            if (quizFinished && questions.length > 0) {
+                const newScore = await calculateScore();
+                await checkbadgeUnlock(newScore);
+            }
+        };
+
+        run();
+    }, [quizFinished]);
 
     // function to start quiz for selected level
     const startQuiz = async (levelId) => {
@@ -111,7 +123,8 @@ function Home() {
         // simple string comparison (ignoring case/whitespace)
         if (answer === currentQuestion.Answer.trim().toLowerCase()) {
             // if answer is correct, increment score
-            setCorrectAnswers(correctAnswers + 1);
+            setCorrectAnswers((prev) => prev + 1);
+            setError('');
         }
 
         // increment question index to move to next question
@@ -123,7 +136,6 @@ function Home() {
         // if no more questions, finish quiz
         } else {
             setQuizFinished(true);
-            calculateScore();
         }
     };
 
@@ -160,6 +172,64 @@ function Home() {
             });
         } catch (err) {
             setError('Failed to update score.');
+        }
+
+        return calculatedScore;
+    };
+
+    // function to check if user has unlocked any badges
+    const checkbadgeUnlock = async (score) => {
+        // badge id 2
+        if (score > 0) {
+            // ccheck if user already has badge
+            const userhasbadge = await checkUserHasBadge(2);
+
+            if (!userhasbadge) {
+                await giveUserBadge(2);
+            }
+        }
+
+        // other badges checks would go here
+    };
+
+    // function to check if user has a specific badge
+    const checkUserHasBadge = async (badgeId) => {
+        const token = localStorage.getItem('access_token');
+        if (!token) return false;
+
+        try {
+            const response = await fetch(`${API_URL}badges/get?badge_id=${badgeId}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+        if (!response.ok) throw new Error("Failed to check badges.");
+
+            const data = await response.json();
+            return data.some(badge => badge.Badge_ID === badgeId);
+        } catch (err) {
+            setError(err.message);
+            return false;
+        }
+    }
+
+    const giveUserBadge = async (badgeId) => {
+        const token = localStorage.getItem('access_token');
+        if (!token) return;
+        
+        try {
+            const response = await fetch(`${API_URL}users/badge/post?badge_id=${badgeId}`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) throw new Error("Failed to award badge.");
+        } catch (err) {
+            setError(err.message);
         }
     };
 

@@ -80,6 +80,30 @@ def get_progress(db: Session, user_id: int) -> ProgressModel:
     return progress
 
 
+def get_user_level_id(db: Session, user_id: int) -> int:
+    """Get the current user's level id."""
+    progress = get_progress(db, user_id)
+    progress_row = cast(Any, progress)
+
+    if progress_row.Level_ID is None:
+        raise HTTPException(status_code=404, detail="User level not found")
+
+    return int(progress_row.Level_ID)
+
+
+def update_user_level_id(db: Session, user_id: int, level_id: int) -> ProgressModel:
+    """Set the current user's level id."""
+    progress = get_progress(db, user_id)
+    progress_row = cast(Any, progress)
+
+    progress_row.Level_ID = level_id
+
+    db.commit()
+    db.refresh(progress)
+
+    return progress
+
+
 def update_score(db: Session, user_id: int, score_to_add: int) -> ProgressModel:
     """Add to the users score and update level if thresholds are crossed."""
     progress = get_progress(db, user_id)
@@ -88,14 +112,14 @@ def update_score(db: Session, user_id: int, score_to_add: int) -> ProgressModel:
     # add the new score to the existing score
     progress_row.Score = (progress_row.Score or 0) + score_to_add
 
-    # update level based on score thresholds
-    if progress_row.Score >= 3000:
-        progress_row.Level_ID = 3
-    elif progress_row.Score >= 2000:
-        progress_row.Level_ID = 2
-    else:
-        progress_row.Level_ID = 1
+    # get users current level
+    current_level = get_user_level_id(db, user_id)
 
+    # calculate new level from new score (1000 points per level, starting at level 1 with 0 points)
+    new_level = progress_row.Score // 1000 + 1
+
+    if new_level > current_level:
+        update_user_level_id(db, user_id, new_level)
     db.commit()
     db.refresh(progress)
 
