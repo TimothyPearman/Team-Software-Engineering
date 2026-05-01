@@ -2,22 +2,27 @@ from typing import Optional, cast, Any
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 
 from ..models.user import FullUser as FullUserModel
+from ..models.progress import Progress as ProgressModel
 from ..models.auth import User as UserModel
 from ..models.badge import Badge as BadgeModel
 
 from ..crud.badge import get_badge_by_id
 
 
-def get_full_user(db: Session, user_id: int) -> Optional[FullUserModel]:
+def get_full_user(db: Session, user_id: int):
     """Get a user by their ID."""
-    full_user = cast(Optional[FullUserModel], db.query(FullUserModel).filter(FullUserModel.User_ID == user_id).first())
+    result = db.execute(
+        text("SELECT * FROM Full_User WHERE User_ID = :user_id"),
+        {"user_id": user_id}
+    ).mappings().first()
 
-    if not full_user:
+    if not result:
         raise HTTPException(status_code=404, detail="User not found")
     
-    return full_user
+    return dict(result)
 
 def create_user(db: Session, username: str, password: str):
     """create a new user"""
@@ -60,3 +65,38 @@ def update_badge(db: Session, user_id: int, badge_id: int) -> BadgeModel:
     db.refresh(user)
     
     return badge
+
+def get_progress(db: Session, user_id: int) -> ProgressModel:
+    """Get the progress record for a user."""
+    user = cast(Optional[UserModel], db.query(UserModel).filter(UserModel.User_ID == user_id).first())
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user_row = cast(Any, user)
+    progress = cast(Optional[ProgressModel], db.query(ProgressModel).filter(ProgressModel.Progress_ID == user_row.Progress_ID).first())
+    if not progress:
+        raise HTTPException(status_code=404, detail="Progress not found")
+
+    return progress
+
+
+def update_score(db: Session, user_id: int, score_to_add: int) -> ProgressModel:
+    """Add to the users score and update level if thresholds are crossed."""
+    progress = get_progress(db, user_id)
+    progress_row = cast(Any, progress)
+
+    # add the new score to the existing score
+    progress_row.Score = (progress_row.Score or 0) + score_to_add
+
+    # update level based on score thresholds
+    if progress_row.Score >= 3000:
+        progress_row.Level_ID = 3
+    elif progress_row.Score >= 2000:
+        progress_row.Level_ID = 2
+    else:
+        progress_row.Level_ID = 1
+
+    db.commit()
+    db.refresh(progress)
+
+    return progress

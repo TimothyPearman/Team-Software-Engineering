@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 from ..core.security import get_user_id_from_token
 from ..crud import auth as auth_crud
 from ..crud import user as user_crud
+from ..crud.user import get_progress, update_score
+from ..schemas.progress import ProgressSchema
 from ..db.session import get_db
 from ..schemas.auth import UserSchema
 from ..schemas.badge import BadgeSchema
@@ -23,14 +25,31 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token/get")
 """
 GET Endpoints:
 """
-@router.get("/get", response_model=FullUser, summary="get the current user")
+@router.get("/get", summary="get the current user")
 async def get_data(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """Return the currently authenticated user."""
     user_id = get_user_id_from_token(token)
     full_user = user_crud.get_full_user(db, user_id)
-
     return full_user
 
+@router.get("/score/get", response_model=ProgressSchema, summary="get the current users score and level")
+async def get_score(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """Return the current users score and level."""
+    user_id = get_user_id_from_token(token)
+    return get_progress(db, user_id)
+
+@router.put("/score/put", response_model=ProgressSchema, summary="update the current users score")
+async def update_user_score(score_to_add: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """Add to the users score and updates level if thresholds are crossed."""
+    user_id = get_user_id_from_token(token)
+    return update_score(db, user_id, score_to_add)
+
+@router.get("/get", summary="get the current user")
+async def get_data(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """Return the currently authenticated user."""
+    user_id = get_user_id_from_token(token)
+    full_user = user_crud.get_full_user(db, user_id)
+    return full_user
 
 """
 POST Endpoints:

@@ -13,7 +13,6 @@ class FullUser(Base):
     StartDate = Column(Date, nullable=False)
     EndDate = Column(Date, nullable=True)
     Count = Column(Integer, nullable=False)
-    Badge_ID = Column(Integer, primary_key=True, index=True)
     Name = Column(String(100), nullable=False)
     Description = Column(String(255), nullable=True)
     Level_ID = Column(Integer, nullable=True)

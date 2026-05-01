@@ -123,6 +123,7 @@ function Home() {
         // if no more questions, finish quiz
         } else {
             setQuizFinished(true);
+            calculateScore();
         }
     };
 
@@ -141,13 +142,25 @@ function Home() {
     };
 
     // function to calculate score based on number of correct answers and total questions
-    const calculateScore = () => {
-        //rhino do this here right here hello im here hi :D
-        // calculate score based on percentage of correct answers multiplied by 1000, rounded to nearest whole number
-        //score = stuff
-        // update users score variable in the database using post endpoint 
-        // - you will need to create a new endpoint score/post that takes user id and and updates their score variable
-        // gl hf
+    const calculateScore = async () => {
+        const token = localStorage.getItem('access_token');
+        if (!token) return;
+
+        // calculate scores by percentage * 1000 then rounded
+        const calculatedScore = Math.round((correctAnswers / questions.length) * 1000);
+        setScore(calculatedScore);
+
+        // send score to backend
+        try {
+            await fetch(`${API_URL}users/score/put?score_to_add=${calculatedScore}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        } catch (err) {
+            setError('Failed to update score.');
+        }
     };
 
     // render quiz page
