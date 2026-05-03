@@ -3,17 +3,25 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function Register() {
+	// state for page navigation
 	const navigate = useNavigate()
+	// state for username input
 	const [username, setUsername] = useState('')
+	// state for password input
 	const [password, setPassword] = useState('')
+	// state for confirm password input
 	const [confirmPassword, setConfirmPassword] = useState('')
+	// state for error messages
 	const [error, setError] = useState('')
+	// state for submission status
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
+	// function to handle form submission
 	const handleSubmit = async (event) => {
 		event.preventDefault()
 		setError('')
 
+		// check if password and confirm password match
 		if (password !== confirmPassword) {
 			setError('Passwords do not match')
 			return
@@ -21,6 +29,7 @@ function Register() {
 
 		setIsSubmitting(true)
 
+		// make API call to register the user
 		try {
 			const query = new URLSearchParams({ username, password }).toString()
 			const response = await fetch(`http://localhost:8000/users/post?${query}`, {
@@ -41,12 +50,16 @@ function Register() {
 		}
 	}
 
+	// render the registration form
 	return (
 		<main className="login-page">
 			<section className="login-box">
 				<h1 style={{color: '#13f0e5' }}>Register Page</h1>
 
+				{/* registration form with fields*/}
 				<form className="login-form" onSubmit={handleSubmit}>
+
+					{/* username input field */}
 					<div className="login-field">
 						<label htmlFor="username">Username:</label>
 						<input
@@ -61,6 +74,7 @@ function Register() {
 						/>
 					</div>
 
+					{/* password input fields */}
 					<div className="login-field">
 						<label htmlFor="password">Password</label>
 						<input
@@ -75,6 +89,7 @@ function Register() {
 						/>
 					</div>
 
+					{/* confirm password input field */}
 					<div className="login-field">
 						<label htmlFor="confirm-password">Confirm Password</label>
 						<input
@@ -89,6 +104,7 @@ function Register() {
 						/>
 					</div>
 
+					{/* if there is an error show the error message */}
 					{error && <p className="login-error" role="alert">{error}</p>}
 
 					<div className="login-actions">

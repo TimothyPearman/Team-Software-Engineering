@@ -4,22 +4,34 @@ import badge1Image from '../src/assets/badge1.png'
 import badge2Image from '../src/assets/badge2.png'
 
 function Profile() {
+  // state to store profile data
   const [profileData, setProfileData] = useState(null)
+  // state for error handling
   const [error, setError] = useState('')
+  // state for loading states
   const [isLoading, setIsLoading] = useState(false)
+  // state to track which section is expanded
   const [expandedSection, setExpandedSection] = useState(null)
+  // state for badge input value
   const [badgeInputValue, setBadgeInputValue] = useState('')
+  // state for streaks
   const [streaks, setStreaks] = useState([])
+  // state for streak errors
   const [streakError, setStreakError] = useState('')
+  // state for streak loading
   const [isStreakLoading, setIsStreakLoading] = useState(false)
+  // state for badges
   const [badges, setBadges] = useState([])
+  // state for badge errors
   const [badgeError, setBadgeError] = useState('')
+  // state for badge loading
   const [isBadgeLoading, setIsBadgeLoading] = useState(false)
 
   {/* function for handling fetch from endpoint */}
   const handleFetchProfile = async () => {
     const token = localStorage.getItem('access_token')
 
+    // If no token is found, set error and return early
     if (!token) {
       setProfileData(null)
       setError('No access token found. Please log in first.')
@@ -29,6 +41,7 @@ function Profile() {
     setError('')
     setIsLoading(true)
 
+    // Try to fetch profile data from the endpoint
     try {
       const response = await fetch('http://localhost:8000/users/get', {
         method: 'GET',
@@ -58,19 +71,22 @@ function Profile() {
     handleFetchProfile()
   }, [])
 
+  {/* update badge input value when profile data changes */}
   useEffect(() => {
     setBadgeInputValue(formatProfileValue(profileData?.Badge_ID))
   }, [profileData])
 
   {/* fetch streaks when streaks section is expanded */}
   useEffect(() => {
+    // If the expanded section is not "Streak", do not fetch streaks
     const fetchStreaks = async () => {
       if (expandedSection !== 'Streak') {
         return
       }
-
+      
       const token = localStorage.getItem('access_token')
 
+      // If no token is found, set error and return early
       if (!token) {
         setStreaks([])
         setStreakError('No access token found. Please log in first.')
@@ -79,7 +95,8 @@ function Profile() {
 
       setStreakError('')
       setIsStreakLoading(true)
-
+      
+      // Try to fetch streak data from the endpoint
       try {
         const response = await fetch('http://localhost:8000/streaks/get', {
           method: 'GET',
@@ -90,6 +107,7 @@ function Profile() {
 
         const data = await response.json()
 
+        // If the response is not OK, throw an error with the message from the response or a default message
         if (!response.ok) {
           throw new Error(data.detail || 'Failed to fetch streaks')
         }
@@ -109,12 +127,14 @@ function Profile() {
   {/* fetch badges when badge section is expanded */}
   useEffect(() => {
     const fetchBadges = async () => {
+      // If the expanded section is not "Badge", do not fetch badges
       if (expandedSection !== 'Badge') {
         return
       }
 
       const token = localStorage.getItem('access_token')
 
+      // If no token is found, set error and return early
       if (!token) {
         setBadges([])
         setBadgeError('No access token found. Please log in first.')
@@ -124,6 +144,7 @@ function Profile() {
       setBadgeError('')
       setIsBadgeLoading(true)
 
+      // Try to fetch badge data from the endpoint
       try {
         const response = await fetch('http://localhost:8000/badges/get', {
           method: 'GET',
@@ -186,10 +207,12 @@ function Profile() {
   
   {/* format endpoint data into string */}
   const formatProfileValue = (value) => {
+    // Handle null, undefined, and empty string values
     if (value === null || value === undefined || value === '') {
       return 'N/A'
     }
 
+    // If the value is an object stringify it
     if (typeof value === 'object') {
       return JSON.stringify(value)
     }
@@ -222,6 +245,7 @@ function Profile() {
     // Validate that the badge ID matches one of the listed badges
     const isValidBadge = badges.some((badge) => badge.Badge_ID === badgeId)
 
+    // If the badge ID is not valid, set an error message and return early
     if (!isValidBadge) {
       setBadgeError('Invalid badge ID. Please select one from the list.')
       return
@@ -229,11 +253,13 @@ function Profile() {
 
     const token = localStorage.getItem('access_token')
 
+    // If no token is found, set error and return early
     if (!token) {
       setBadgeError('No access token found. Please log in first.')
       return
     }
 
+    // fetch the endpoint to update the badge for the user
     try {
       setBadgeError('')
       const response = await fetch(`http://localhost:8000/users/badge/put?badge_id=${badgeId}`, {
@@ -245,6 +271,7 @@ function Profile() {
 
       const data = await response.json()
 
+      // If the response is not OK, throw an error with the message from the response or a default message
       if (!response.ok) {
         throw new Error(data.detail || 'Failed to update badge')
       }
@@ -252,6 +279,8 @@ function Profile() {
       // Refresh profile data to show updated badge
       handleFetchProfile()
       setBadgeError('')
+      // Close the expanded badge section after successful update
+      setExpandedSection(null)
     } catch (updateError) {
       setBadgeError(updateError.message)
     }
@@ -269,18 +298,24 @@ function Profile() {
           {/* content for expanded streak section */}
           {expandedSection === 'Streak' ? (
             <div className="expanded-content">
+              {/* if the streak data is loading show loading message */}
               {isStreakLoading && <p className="expanded-message">Loading streaks...</p>}
-
+              
+              {/* if there is an error fetching the streak data show error message */}
               {streakError && <p className="login-error" role="alert">{streakError}</p>}
 
+              {/* if the streak data is done loading and there are no streaks show message */}
               {!isStreakLoading && !streakError && streaks.length === 0 && (
                 <p className="expanded-message">No streaks found.</p>
               )}
 
+              {/* if there are streaks show them in a list */}
               {streaks.length > 0 && (
                 <div className="streak-list">
+                  {/* map over streaks and display their information in cards */}
                   {streaks.map((streak) => (
                     <article key={streak.Streak_ID} className="streak-card">
+                      {/* display streak information in rows */}
                       <div className="streak-row">
                         <span className="streak-label">Streak ID:</span>
                         <span className="streak-value">{formatProfileValue(streak.Streak_ID)}</span>
@@ -307,6 +342,7 @@ function Profile() {
           ) : expandedSection === 'Badge' ? (
             <div className="expanded-content">
               <div className="badge-id-row">
+                {/* allow user to input badge ID to update their badge*/}
                 <span className="expanded-message">Favourite Badge:</span>
                 <input
                   type="text"
@@ -323,22 +359,28 @@ function Profile() {
                 </button>
               </div>
 
+              {/* if the badge data is loading show loading message */}
               {isBadgeLoading && <p className="expanded-message">Loading badges...</p>}
 
+              {/* if there is an error fetching the badge data show error message */}
               {badgeError && <p className="login-error" role="alert">{badgeError}</p>}
 
+              {/* if the badge data is done loading and there are no badges show message */}
               {!isBadgeLoading && !badgeError && badges.length === 0 && (
                 <p className="expanded-message">No badges found.</p>
               )}
 
+              {/* if there are badges show them in a list */}
               {badges.length > 0 && (
                 <div className="streak-list">
+                  {/* map over badges and display their information in cards */}
                   {badges.map((badge) => (
                     <article key={`${badge.User_ID}-${badge.Badge_ID}`} className="streak-card">
+                      {/* display badge information in rows and show badge image if it exists */}
                       <div className="badge-card-content">
                         <div className="badge-text-content">
                           <div className="streak-row">
-                            <span className="streak-label">Favourite Badge:</span>
+                            <span className="streak-label">ID:</span>
                             <span className="streak-value">{formatProfileValue(badge.Badge_ID)}</span>
                           </div>
                           <div className="streak-row">
@@ -379,10 +421,18 @@ function Profile() {
         <section className="box">
           <h1 style={{ color: '#13f0e5' }}>Profile Page</h1>
 
+          {/* if the profile data is loading show loading message */}
           {isLoading && <p>Loading profile info...</p>}
 
+          {/* if there is an error fetching the profile data show error message */}
           {error && <p className="login-error" role="alert">{error}</p>}
 
+          {/* if the profile data is done loading and there is no profile data show message */}
+          {!isLoading && !error && !profileData && (
+            <p>No profile information found.</p>
+          )}
+
+          {/* if profile data exists show the profile sections */}
           {profileData && (
             <div className="profile-sections">
               {profileSections.map((section) => (
