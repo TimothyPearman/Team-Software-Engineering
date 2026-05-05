@@ -17,6 +17,7 @@ from ..core.security import (
 )
 from ..core.token import revoke_token as denylist_revoke_token
 from ..models.auth import User as UserModel
+from ..crud.streak import handle_daily_streak
     
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token/get")           # define the OAuth2 scheme for token authentication
 
@@ -51,6 +52,7 @@ async def issue_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    handle_daily_streak(db, cast(int, user.User_ID))
     access_token = create_access_token(cast(int, user.User_ID))                         # create token
     
     return {

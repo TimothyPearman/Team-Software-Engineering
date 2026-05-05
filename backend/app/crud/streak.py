@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from ..models.streak import Streak as StreakModel, UserStreak as UserStreakModel
+from ..models.auth import User as UserModel
 
 def get_streak(db: Session, user_id: int, streak_id: int | None = None) -> StreakModel | list[StreakModel]:
     """Get all streaks for a user, or a specific streak when streak_id is provided."""
@@ -66,3 +67,61 @@ def update_streak(db: Session, user_id: int, Streak_ID: int, code: int) -> Strea
     db.commit()
     db.refresh(streak)
     return streak
+
+def handle_daily_streak(db: Session, user_id: int) -> None:
+    """Check login date and update streak accordingly."""
+    from datetime import date, timedelta
+
+    # get the user to find their current streak
+    user = cast(Optional[UserModel], db.query(UserModel).filter(UserModel.User_ID == user_id).first())
+    if not user:
+        return
+
+    user_row = cast(any, user)
+    streak_id = user_row.CurrentStreak_ID
+    if not streak_id:
+        return
+
+    # get the current streak
+    streak = cast(Optional[StreakModel], db.query(StreakModel).filter(StreakModel.Streak_ID == streak_id).first())
+    if not streak:
+        return
+
+    streak_row = cast(any, streak)
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+
+    # get the last date the streak was active
+    last_date = streak_row.StartDate
+    if streak_row.Count > 1:
+        # estimate last login as StartDate + Count - 1 days
+        last_date = streak_row.StartDate + timedelta(days=int(streak_row.Count) - 1)
+
+    if last_date == today:
+        # already logged in today do nothing
+        return
+    elif last_date == yesterday:
+        # logged in yesterday increase streak
+        streak_row.Count += 1
+        db.commit()
+    else:
+        # missed a day end old streak and create a new one
+        streak_row.EndDate = yesterday
+        db.commit()
+
+        # create new streak
+        new_streak = StreakModel(
+            StartDate=today,
+            EndDate=None,
+            Count=1
+        )
+        db.add(new_streak)
+        db.commit()
+        db.refresh(new_streak)
+
+        # link new streak to user and update current streak
+        new_user_streak = UserStreakModel(User_ID=user_id, Streak_ID=cast(int, new_streak.Streak_ID))
+        db.add(new_user_streak)
+
+        user_row.CurrentStreak_ID = new_streak.Streak_ID
+        db.commit()
