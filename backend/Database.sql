@@ -26,7 +26,7 @@ CREATE TABLE `Question` (
 DROP TABLE IF EXISTS `Dictionary`;
 CREATE TABLE `Dictionary` (
     `Dictionary_ID` INT NOT NULL AUTO_INCREMENT,
-    `Description` VARCHAR(255),
+    `Description` VARCHAR(1000),
     CONSTRAINT `pk_Dictionary` PRIMARY KEY (`Dictionary_ID`)
 );
 
@@ -118,6 +118,7 @@ CREATE TABLE `User_Badge` (
 
 # ----------------------------------------------------------------------data---------------------------------------------------------------------- #
 
+START TRANSACTION;
 
 # ---------------------------------------------------------------------- #
 # Insert badges                                        				     #
@@ -133,21 +134,57 @@ VALUES ("first steps", "complete the first level");
 # ---------------------------------------------------------------------- #
 
 INSERT INTO `Dictionary`(Description)
-VALUES ("print - outputs to the terminal, if - checks a condition");
+VALUES ("1) SQL is the standard language for managing, manipulating and retrieving data stored in relational databases. \n
+		 2) motherboard is the main printed circuit board, holding and allowing communication between many of the crucial electronic components of a system. \n
+		 3) RAM is a form of electronic computer memory that can be read and changed in any order, typically used to store working data and machine code. \n
+		 4) string s=“ABC”; /ncout << s[1]; would result in the output “B” as C++ used 0-based indexing, meaning A would be 0, B would be 1, and C would be 2. Therefore outputting 1, resulting in B. \n
+		 5) Computer architecture is the design, structure and functional organisation of a computer system, determining how components such as the CPU, memory, or I/O devices interact with eachothern.");
 INSERT INTO `Dictionary`(Description)
-VALUES ("level 2");
+VALUES ("1) Science would be the output, as print(test[8:]) means to print the given text after the 8th character, which would start at S for science. \n
+		 2) M in ram is memory, as RAM stands for random access memory. \n
+		 3) 2myvar, as variables cannot begin with numbers. \n
+		 4) .py stands for a python file, example = main.py. \n
+		 5) string data type stores text.\n
+		 6) * is used to multiply numbers, using, as symbols are used for mathematical functions (eg % for divide.)");
 INSERT INTO `Dictionary`(Description)
-VALUES ("level 3");
+VALUES ("1) HTTPS is used for a secure communication over a computer network, standing for hypertext transfer protocol secure. \n
+		 2) Bubble sort is a simple iterative sorting algorithm that works by repeatedly stepping through a list, comparing adjacent elements, and swapping them if they are in the wrong order. \n
+		 3) HTML stands for hyper text markup language, providing a means to create structured documents. \n
+		 4) C# as an OOP language has straightforward, clearly defined keywords, whereas C does not. \n
+		 5) managing hardware and software resources, as an operating system acts as a bridge between the user and the computer hardware to provide an environment where users can execute program’s efficiently. \n
+		 6) Stack data structure is a linear data structure that follows the LIFO principle, meaning the last element added to the stack is the first one to be removed.");
 INSERT INTO `Dictionary`(Description)
-VALUES ("level 4");
+VALUES ("1) Linear complexity - algorithm time complexity is given by 0(n). \n
+		 2) 0(log n) - the time complexity of binary search. \n
+		 3) Singleton - the design pattern that restricts the instantation of a class to one “single” instance. \n
+		 4) Big (0), Big (Ω), Big (θ), all describe the time complexity of an algorithm. \n
+		 5) The code: \n
+			i = 0 \n
+			while (i <= 5): \n
+				print (‘‘Hello’’) \n
+				i = i - 1  \n
+			would print the message Hello, an infinite number of times, as i will always be less than 5.");
 INSERT INTO `Dictionary`(Description)
-VALUES ("level 5");
-
+VALUES ("1) 0(n2) is the big 0 complexity of the loop: for (int i = 0; i < n; i++) \n
+		 2) The python code: 
+			x = “123”  \n
+			y = int(x[0]) + int(x[2])  \n
+			print(y) \n
+			will have the output 4, as x[0] is the first item in the list ‘1’, added to the third item in the list ‘3’ which results in the outcome 4. \n
+		 3) The C++ code:  \n
+			int x = 10;  \n
+			int *p = &x;  \n
+			p += 5;  \n
+			cout << x;  \n
+			would result in the output 15, as its addingp and x together, as *p = &x  \n
+		 4) If you try to reference a null pointer in C++, it causes a segmentation fault, which is undefined behaviour.  \n
+		 5) Node.js uses the concurrency model Event-driven, non-blocking I/O  \n
+		 6) A deadlock in operating systems is when two or more processes are waiting indefinitely for an event that can be caused by only one of the waiting processes.");
 
 # ---------------------------------------------------------------------- #
 # Insert Levels 1, 2, 3, 4, 5                                            #
 # ---------------------------------------------------------------------- #
-START TRANSACTION;
+
 INSERT INTO `Level`(Dictionary_ID) VALUES (1); -- Level 1
 INSERT INTO `Level`(Dictionary_ID) VALUES (2); -- Level 2
 INSERT INTO `Level`(Dictionary_ID) VALUES (3); -- Level 3
@@ -157,7 +194,6 @@ INSERT INTO `Level`(Dictionary_ID) VALUES (5); -- Level 5
 # ---------------------------------------------------------------------- #
 # Insert Questions (Levels 1 to 5)                                       #
 # ---------------------------------------------------------------------- #
-START TRANSACTION;
 
 -- Level 1 (Beginner)
 INSERT INTO `Question`(Level_ID, Question, Answer) VALUES 
@@ -204,11 +240,14 @@ INSERT INTO `Question`(Level_ID, Question, Answer) VALUES
 (5, 'Which concurrency model does Node.js primarily use?\nA) Multi-threading\nB) Event-driven, non-blocking I/O\nC) Actor model\nD) Coroutines', 'B'),
 (5, 'What is a deadlock in operating systems?\nA) When a thread finishes execution\nB) When two or more processes are waiting indefinitely for an event that can be caused by only one of the waiting processes\nC) When a process is suspended\nD) When memory is fully utilized', 'B');
 
+COMMIT;
+
 # ---------------------------------------------------------------------- #
 # Add test account info into all tables                                  #
 # ---------------------------------------------------------------------- #
 
 START TRANSACTION;
+
 INSERT INTO `Progress`(Score,Level_ID)
 VALUES ("999", "1");
 SET @ProgressID = LAST_INSERT_ID();
@@ -365,3 +404,5 @@ select * from `Full_User`;
 select * from `Level_Questions`;
 select * from `User_Streaks`;
 select * from `User_Badges`;
+
+select * from `Dictionary`;

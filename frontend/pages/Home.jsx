@@ -7,6 +7,10 @@ const API_URL = "http://localhost:8000/";
 function Home() {
     // state to store levels
     const [levels, setLevels] = useState([]);
+    // state to store dictionary entries
+    const [dictionaryEntries, setDictionaryEntries] = useState([]);
+    // state to track whether the dictionary panel is visible
+    const [dictionaryOpen, setDictionaryOpen] = useState(false);
     // state to store user's current level
     const [userLevelId, setUserLevelId] = useState(2);
     // state to store selected level for quiz
@@ -50,7 +54,6 @@ function Home() {
                 Authorization: `Bearer ${token}`,
             },
         })
-        // convert response to json and check for errors
             .then(res => res.json().then(data => ({ ok: res.ok, data })))
             .then(({ ok, data }) => {
                 if (!ok) {
@@ -61,6 +64,17 @@ function Home() {
             })
             .catch(err => setError(err.message));
     }, [quizFinished]);
+
+    // fetch dictionary entries on mount
+    useEffect(() => {
+        fetch(`${API_URL}dictionary/get`)
+            .then(res => res.json())
+            .then(data => {
+                const dictionaryArray = Array.isArray(data) ? data : [data];
+                setDictionaryEntries(dictionaryArray);
+            })
+            .catch(() => setError('Failed to load dictionary.'));
+    }, []);
 
     // calculate score when quiz-finished view is shown
     useEffect(() => {
@@ -153,6 +167,11 @@ function Home() {
         setError('Level locked');
     };
 
+    // function to toggle the dictionary panel
+    const toggleDictionary = () => {
+        setDictionaryOpen((previousValue) => !previousValue);
+    };
+
     // function to calculate score based on number of correct answers and total questions
     const calculateScore = async () => {
         const token = localStorage.getItem('access_token');
@@ -233,15 +252,44 @@ function Home() {
         }
     };
 
+    const visibleDictionaryEntries = dictionaryEntries.filter(
+        (entry) => Number(entry.Dictionary_ID) <= Number(userLevelId)
+    );
+
     // render quiz page
     return (
         // main container for quiz page
         <main className="quiz-page page">
 
             {/* dictionary button */}
-            <button className="dictionary-button">Dictionary</button>
+            <button className="dictionary-button" onClick={toggleDictionary}>
+                {dictionaryOpen ? 'Close Dictionary' : 'Dictionary'}
+            </button>
+
+            {/* open dictionary box if button is toggled */}
+            {dictionaryOpen && (
+                <section className="box dictionary-box">
+                    <h2 style={{ color: '#13f0e5' }}>Dictionary</h2>
+
+                    {visibleDictionaryEntries.length === 0 ? (
+                        <p className="dictionary-empty">No dictionary entries found.</p>
+                    ) : (
+                        <div className="dictionary-list">
+                            {visibleDictionaryEntries.map((entry) => (
+                                <div key={entry.Dictionary_ID} className="dictionary-entry">
+                                    <h3>level {entry.Dictionary_ID}</h3>
+                                    {entry.Description.split('\n').map((line, index) => (
+                                        <p key={`${entry.Dictionary_ID}-${index}`}>{line}</p>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </section>
+            )}
 
             {/* quiz box */}
+            {!dictionaryOpen && (
             <section className="box quiz-box">
                 {/* header */}
                 <h1 style={{ color: '#13f0e5' }}>Test your knowledge:</h1>
@@ -331,6 +379,7 @@ function Home() {
                     </div>
                 )}
             </section>
+            )}
         </main>
     );
 }

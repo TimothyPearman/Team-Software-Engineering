@@ -82,3 +82,41 @@
 	color: #13f0e5;
     z-index: 1000; /* Ensure it appears above other content */
 }
+
+.dictionary-box {
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.dictionary-box h2 {
+    text-align: center;
+    margin-top: 0;
+}
+
+.dictionary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dictionary-entry {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid #13f0e5;
+    border-radius: 8px;
+    padding: 16px;
+    color: #e7fffd;
+    text-align: left;
+}
+
+.dictionary-entry h3 {
+    margin: 0 0 8px;
+    color: #13f0e5;
+}
+
+.dictionary-entry p,
+.dictionary-empty {
+    margin: 0;
+    color: #e7fffd;
+}
